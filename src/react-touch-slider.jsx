@@ -55,8 +55,8 @@ export default React.createClass({
     touchMove(e) {
         var x0 = e.touches[0].clientX - this._initialTouch.clientX;
 
-        if(Math.abs(x0) > 10) {// 响应滚动
-            e.preventDefault();// 减弱滑动时的点击
+        if(Math.abs(x0) > 5) {// 响应滚动
+            e.preventDefault();
             this.setState({ x0 });
         }
     },
@@ -124,6 +124,7 @@ export default React.createClass({
             return <i key={i} className={currentIndex == i ? 'on' : ''}/>;
         });
 
+        // transform3d 在 safari 滚动时会遮挡 position absolute
         var transitionX = action ? (-action * 33.333 + '%') : (x0 + 'px');
 
         return (
@@ -132,7 +133,7 @@ export default React.createClass({
                 onTouchMove={touchMove}
                 onTouchEnd={touchEnd}>
 
-                <div style={{WebkitTransform: `translate3d(${transitionX},0,0)`}}
+                <div style={{WebkitTransform: `translateX(${transitionX})`}}
                     onTransitionEnd={transitionEnd}
                     className={'tslider-items ' + (transition ? 'transition': '')}>
                     {items}
