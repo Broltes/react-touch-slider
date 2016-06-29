@@ -15,7 +15,7 @@ var App = React.createClass({
 
         return (
             <div>
-                <Slider imgs={imgs}/>
+                <Slider autoPlayInterval={2e3} imgs={imgs}/>
             </div>
         );
     }

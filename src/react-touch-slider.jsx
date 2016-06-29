@@ -38,6 +38,7 @@ export default React.createClass({
     },
 
     touchStart(e) {
+        this.stopAutoPlay();
         if(this.state.x0) this.transitionEnd();// reset
 
         // 设置起始触点用于跟踪拖拽
@@ -78,6 +79,28 @@ export default React.createClass({
             action: 0,
             currentIndex: this.valiIndex(currentIndex + action)
         });
+        this.startAutoPlay();
+    },
+
+    componentDidMount(){
+        if(this.props.autoPlayInterval) this.startAutoPlay();
+    },
+    startAutoPlay(){
+        var { autoPlayInterval } = this.props;
+        var { _autoPlayIntervalId } = this;
+        if(!autoPlayInterval || _autoPlayIntervalId) return;
+
+        // start auto play
+        this._autoPlayIntervalId = setInterval(function() {
+            this.step(1);
+        }.bind(this), autoPlayInterval);
+    },
+    stopAutoPlay(){
+        var { autoPlayInterval } = this.props;
+        if(!autoPlayInterval) return;
+
+        clearInterval(this._autoPlayIntervalId);
+        this._autoPlayIntervalId = 0;
     },
 
     render(){
