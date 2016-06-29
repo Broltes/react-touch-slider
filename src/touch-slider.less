@@ -1,0 +1,55 @@
+.tslider{
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+
+    &-items{
+        width: 300%;
+        margin-left: -100%;
+
+        &.transition{
+            transition: transform .3s;
+        }
+
+        &:after{
+            content: '';
+            display: table;
+            clear: both;
+        }
+    }
+
+    &-none{
+        display: none;
+    }
+    &-item{
+        width: 33.333%;
+        float: left;
+
+        img{
+            display: block;
+            width: 100%;
+        }
+    }
+
+    &-dots{
+        position: absolute;
+        bottom: 1em;
+        width: 100%;
+        text-align: center;
+
+        i{
+            display: inline-block;
+            font-size: .5em;
+            height: 1em;
+            width: 1em;
+            border: 1px solid #ccc;
+            border-radius: 100%;
+            background-color: #777;
+            margin-right: .6em;
+
+            &.on{
+                background-color: #fff;
+            }
+        }
+    }
+}
