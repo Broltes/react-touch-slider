@@ -1,6 +1,6 @@
 {
   "name": "react-touch-slider",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "触屏版图片轮播",
   "main": "./lib/react-touch-slider.js",
   "scripts": {
