@@ -1,24 +1,21 @@
 var webpack = require('webpack');
-var WebpackDevServer = require('webpack-dev-server');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var path = require("path");
-var devport = 6004;
+var demoDist = '../github.io/tslider';
 
-var config = {
+module.exports = {
     entry: [
-        'webpack-dev-server/client?http://dev.broltes.com:' + devport,
-        'webpack/hot/only-dev-server',
         'babel-polyfill',
         './demos/app.jsx',
     ],
     output: {
-        path: path.resolve('./demos'),
+        path: path.resolve(demoDist),
         filename: 'app.js'
     },
     plugins: [
-        new webpack.DefinePlugin({ 'process.env.NODE_ENV': '"development"' }),
-        new webpack.HotModuleReplacementPlugin(),
-        new webpack.NoErrorsPlugin(),
+        new webpack.DefinePlugin({ 'process.env.NODE_ENV': '"production"' }),
+        new webpack.optimize.DedupePlugin(),
+        new webpack.optimize.UglifyJsPlugin(),
         new HtmlWebpackPlugin({
             template: path.join(__dirname, 'demos/index.html')
         })
@@ -34,16 +31,15 @@ var config = {
                 test: /\.jsx?$/,
                 exclude: /node_modules/,
                 loaders: [
-                    'react-hot',
                     'babel?presets[]=react,presets[]=es2015',
                 ]
-            }, {
+            },{
                 test: /\.less$/,
                 loaders: [
                     'style',
-                    'css?sourceMap',
+                    'css',
                     'postcss',
-                    'less?sourceMap'
+                    'less'
                 ]
             }, {
                 test: /\.(png|jpg)$/,
@@ -57,13 +53,4 @@ var config = {
             require('autoprefixer')({ browsers: ["Android >= 4", "iOS >= 7"]}),
         ];
     },
-
-    devtool: 'eval',
 };
-
-var compiler = webpack(config);
-new WebpackDevServer(compiler, {
-    contentBase: 'demos',
-    hot: true,
-    noInfo: true
-}).listen(devport);

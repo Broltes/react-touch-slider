@@ -7,10 +7,10 @@ import Slider from 'react-touch-slider';
 var App = React.createClass({
     render: function(){
         var imgs = [
-            'img/1.jpg',
-            'img/2.jpg',
-            'img/3.jpg',
-            'img/4.jpg',
+            require('./img/1.jpg'),
+            require('./img/2.jpg'),
+            require('./img/3.jpg'),
+            require('./img/4.jpg'),
         ];
 
         return (

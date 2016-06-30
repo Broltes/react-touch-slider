@@ -5,6 +5,7 @@
   "main": "./lib/react-touch-slider.js",
   "scripts": {
     "start": "node webpack.dev.js",
+    "demos": "rm -rf ../github.io/tslider && webpack --progress --config webpack.demos.config.js",
     "build": "babel src --out-dir lib && cp src/*.less lib/",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -32,6 +33,7 @@
     "babel-preset-es2015": "~6.9.0",
     "babel-preset-react": "~6.5.0",
     "css-loader": "~0.23.1",
+    "file-loader": "^0.9.0",
     "html-webpack-plugin": "^2.19.0",
     "less": "^2.7.1",
     "less-loader": "^2.2.3",
@@ -40,6 +42,7 @@
     "react-dom": "~15.1.0",
     "react-hot-loader": "~1.3.0",
     "style-loader": "~0.13.1",
+    "url-loader": "^0.5.7",
     "webpack": "~1.13.1",
     "webpack-dev-server": "~1.14.1"
   },
