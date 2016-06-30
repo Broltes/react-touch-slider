@@ -27,15 +27,6 @@ export default React.createClass({
 
         return index;
     },
-    step(action){
-        var nextState = {
-            transition: 1,
-        };
-        if(action) nextState.action = action;
-        else nextState.x0 = 0;
-
-        this.setState(nextState);
-    },
 
     touchStart(e) {
         this.stopAutoPlay();
@@ -70,6 +61,22 @@ export default React.createClass({
 
         this.step(action);
     },
+
+
+    // 切换动效
+    step(action){
+        if(this.state.action) this.transitionEnd();// reset
+
+        var nextState = {
+            transition: 1,
+        };
+        if(action) nextState.action = action;
+        else nextState.x0 = 0;
+
+        this.setState(nextState);
+    },
+    // 切换动效完成，更新状态
+    // 并不能总是触发，需要在引用状态前(自动、手动执行下一个轮播)做检查
     transitionEnd(){
         var { currentIndex, action } = this.state;
 
