@@ -4,21 +4,18 @@ var path = require("path");
 var demoDist = '../github.io/tslider';
 
 module.exports = {
+    context: path.resolve('demos'),
     entry: [
         'babel-polyfill',
-        './demos/app.jsx',
+        './app.jsx',
     ],
     output: {
         path: path.resolve(demoDist),
-        filename: 'app.js'
+        filename: '[name].js?[chunkhash]'
     },
     plugins: [
         new webpack.DefinePlugin({ 'process.env.NODE_ENV': '"production"' }),
-        new webpack.optimize.DedupePlugin(),
-        new webpack.optimize.UglifyJsPlugin(),
-        new HtmlWebpackPlugin({
-            template: path.join(__dirname, 'demos/index.html')
-        })
+        new HtmlWebpackPlugin({ template: 'index.html' })
     ],
     resolve: {
         extensions: ['', '.js', '.jsx'],
@@ -31,19 +28,19 @@ module.exports = {
                 test: /\.jsx?$/,
                 exclude: /node_modules/,
                 loaders: [
-                    'babel?presets[]=react,presets[]=es2015',
+                    'babel',
                 ]
             },{
                 test: /\.less$/,
                 loaders: [
                     'style',
-                    'css',
+                    'css?-minimize',
                     'postcss',
                     'less'
                 ]
             }, {
-                test: /\.(png|jpg)$/,
-                loader: 'url?limit=5000'
+                test: /\.(png|jpg?g)$/,
+                loader: 'file?name=[path][name].[ext]?[hash]'
             }
         ]
     },

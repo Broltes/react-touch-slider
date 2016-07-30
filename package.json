@@ -4,8 +4,10 @@
   "description": "触屏版图片轮播",
   "main": "./lib/react-touch-slider.js",
   "scripts": {
-    "start": "node webpack.dev.js",
-    "demos": "rm -rf ../github.io/tslider && webpack --progress --config webpack.demos.config.js",
+    "dev": "webpack-dev-server --hot --config webpack.dev.config.js",
+    "clean:demos": "rm -rf ../github.io/tslider",
+    "clean:lib": "rm -rf lib/",
+    "demos": "webpack -p --optimize-dedupe --progress --config webpack.demos.config.js",
     "build": "babel src --out-dir lib && cp src/*.less lib/",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

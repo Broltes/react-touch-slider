@@ -4,7 +4,7 @@ import './touch-slider.less';
 export default React.createClass({
     getDefaultProps: function () {
         return {
-            actionDistance: 30,// 触发切换动作需要滑动的距离
+            actionDistance: 30// 触发切换动作需要滑动的距离
         };
     },
     getInitialState() {
@@ -12,7 +12,7 @@ export default React.createClass({
             currentIndex: 0,
             transition: 1,// 是否需要缓动
             action: 0,
-            x0: 0,// x轴滑动偏移量
+            x0: 0// x轴滑动偏移量
         };
     },
 
@@ -35,7 +35,7 @@ export default React.createClass({
         // 设置起始触点用于跟踪拖拽
         if(e.touches.length == 1) {
             this._initialTouch = {
-                clientX: e.touches[0].clientX,
+                clientX: e.touches[0].clientX
             };
 
             this.setState({
@@ -51,9 +51,8 @@ export default React.createClass({
             this.setState({ x0 });
         }
     },
-    touchEnd(e) {
+    touchEnd() {
         var action = 0;
-        var actionDistance = 30;// 触发切换动作需要拖拽的距离
         var { x0 } = this.state;
 
         // 判断拖拽动作
@@ -68,7 +67,7 @@ export default React.createClass({
         if(this.state.action) this.transitionEnd();// reset
 
         var nextState = {
-            transition: 1,
+            transition: 1
         };
         if(action) nextState.action = action;
         else nextState.x0 = 0;
@@ -92,6 +91,10 @@ export default React.createClass({
     componentDidMount(){
         if(this.props.autoPlayInterval) this.startAutoPlay();
     },
+    componentWillUnmount(){
+        this.stopAutoPlay();
+    },
+
     startAutoPlay(){
         var { autoPlayInterval } = this.props;
         var { _autoPlayIntervalId } = this;
@@ -113,7 +116,7 @@ export default React.createClass({
     render(){
         var { imgs } = this.props;
         var { currentIndex, action, x0, transition } = this.state;
-        var { valiIndex, touchStart, touchMove, touchEnd, transitionEnd } = this;
+        var { touchStart, touchMove, touchEnd, transitionEnd } = this;
 
         // 一次性加载全部图片，防止切换时重新加载，待优化
         var items = imgs.slice(-1).concat(imgs).concat(imgs[0]).map(function(img, i) {

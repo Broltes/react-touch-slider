@@ -1,28 +1,26 @@
 var webpack = require('webpack');
-var WebpackDevServer = require('webpack-dev-server');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
-var path = require("path");
+var path = require('path');
 var devport = 6004;
 
-var config = {
+module.exports = {
+    context: path.resolve('demos'),
     entry: [
-        'webpack-dev-server/client?http://dev.broltes.com:' + devport,
-        'webpack/hot/only-dev-server',
         'babel-polyfill',
-        './demos/app.jsx',
+        './app.jsx'
     ],
-    output: {
-        path: path.resolve('./demos'),
-        filename: 'app.js'
-    },
     plugins: [
         new webpack.DefinePlugin({ 'process.env.NODE_ENV': '"development"' }),
-        new webpack.HotModuleReplacementPlugin(),
         new webpack.NoErrorsPlugin(),
-        new HtmlWebpackPlugin({
-            template: path.join(__dirname, 'demos/index.html')
-        })
+        new HtmlWebpackPlugin({ template: 'index.html' })
     ],
+    devServer: {
+        inline: true,
+        noInfo: true,
+
+        host: '0.0.0.0',
+        port: devport
+    },
     resolve: {
         extensions: ['', '.js', '.jsx'],
         root: path.resolve('./src')
@@ -35,7 +33,7 @@ var config = {
                 exclude: /node_modules/,
                 loaders: [
                     'react-hot',
-                    'babel?presets[]=react,presets[]=es2015',
+                    'babel'
                 ]
             }, {
                 test: /\.less$/,
@@ -46,24 +44,17 @@ var config = {
                     'less?sourceMap'
                 ]
             }, {
-                test: /\.(png|jpg)$/,
-                loader: 'url?limit=5000'
+                test: /\.(png|jpg?g)$/,
+                loader: 'file'
             }
         ]
     },
 
-    postcss: function () {
+    postcss: function() {
         return [
-            require('autoprefixer')({ browsers: ["Android >= 4", "iOS >= 7"]}),
+            require('autoprefixer')({ browsers: ["Android >= 4", "iOS >= 7"] })
         ];
     },
 
-    devtool: 'eval',
+    devtool: 'eval'
 };
-
-var compiler = webpack(config);
-new WebpackDevServer(compiler, {
-    contentBase: 'demos',
-    hot: true,
-    noInfo: true
-}).listen(devport);
