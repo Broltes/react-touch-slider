@@ -1,9 +1,21 @@
 import React from 'react';
 import './touch-slider.less';
 
+// 拖拽的缓动公式 - easeOutSine
+function easing(distance) {
+    // t: current time, b: begInnIng value, c: change In value, d: duration
+    var t = distance;
+    var b = 0;
+    var d = screen.availWidth; // 允许拖拽的最大距离
+    var c = d / 2.5; // 提示标签最大有效拖拽距离
+
+    return c * Math.sin(t / d * (Math.PI / 2)) + b;
+}
+
 export default React.createClass({
-    getDefaultProps: function () {
+    getDefaultProps: function() {
         return {
+            loop: true,
             actionDistance: 30// 触发切换动作需要滑动的距离
         };
     },
@@ -45,20 +57,51 @@ export default React.createClass({
     },
     touchMove(e) {
         var x0 = e.touches[0].clientX - this._initialTouch.clientX;
+        var realX0;
+        var {
+            state: { currentIndex },
+            props: { imgs, loop }
+        } = this;
 
-        if(Math.abs(x0) > 5) {// 响应滚动
+        if(!loop) {
+            var maxIndex = this._maxIndex = imgs.length - 1;
+            var minIndex = this._minIndex = 0;
+
+            // 第一张图片向右滑动缓动
+            if(currentIndex == minIndex && x0 > 0) realX0 = easing(x0);
+            // 最后一张向左滑动缓动
+            else if(currentIndex == maxIndex && x0 < 0) realX0 = -easing(-x0);
+        }
+
+        // 响应滚动
+        if(Math.abs(x0) > 5 && !realX0) realX0 = x0;
+
+        if(realX0) {
             e.preventDefault();
-            this.setState({ x0 });
+            this.setState({ x0: realX0 });
         }
     },
     touchEnd() {
-        var action = 0;
-        var { x0 } = this.state;
+        var {
+            state: { x0, currentIndex },
+            props: { loop, actionDistance, onOverSlide },
+            _minIndex, _maxIndex, step
+        } = this;
+        var actionable = Math.abs(x0) > actionDistance;
+
+        if(!loop) {
+            // 第一张图片向右滑动缓动
+            // 最后一张向左滑动缓动
+            if(currentIndex == _minIndex && x0 > 0 || currentIndex == _maxIndex && x0 < 0) {
+                if(actionable) onOverSlide && onOverSlide(currentIndex);
+
+                return step(0);
+            }
+        }
 
         // 判断拖拽动作
-        if(Math.abs(x0) > this.props.actionDistance) action = x0 > 0 ? -1 : 1;
-
-        this.step(action);
+        if(actionable) step(x0 > 0 ? -1 : 1);
+        else step(0);
     },
 
 
@@ -89,7 +132,8 @@ export default React.createClass({
     },
 
     componentDidMount(){
-        if(this.props.autoPlayInterval) this.startAutoPlay();
+        const { autoPlayInterval, imgs } = this.props;
+        if(autoPlayInterval && imgs && imgs[0]) this.startAutoPlay();
     },
     componentWillUnmount(){
         this.stopAutoPlay();
@@ -113,10 +157,18 @@ export default React.createClass({
         this._autoPlayIntervalId = 0;
     },
 
+    click(e) {
+        const { onClick } = this.props;
+
+        if(onClick) onClick(this.state.currentIndex, e);
+    },
+
     render(){
-        var { imgs } = this.props;
+        var { imgs, className = '', loop } = this.props;
+        if(!imgs || !imgs[0]) return null;
+
         var { currentIndex, action, x0, transition } = this.state;
-        var { touchStart, touchMove, touchEnd, transitionEnd } = this;
+        var { touchStart, touchMove, touchEnd, transitionEnd, click } = this;
 
         // 一次性加载全部图片，防止切换时重新加载，待优化
         var items = imgs.slice(-1).concat(imgs).concat(imgs[0]).map(function(img, i) {
@@ -138,12 +190,13 @@ export default React.createClass({
         var transitionX = action ? (-action * 33.333 + '%') : (x0 + 'px');
 
         return (
-            <div className="tslider"
+            <div className={'tslider' + (loop ? ' ' : ' _loopless ') + className}
+                onClick={click}
                 onTouchStart={touchStart}
                 onTouchMove={touchMove}
                 onTouchEnd={touchEnd}>
 
-                <div style={{WebkitTransform: `translateX(${transitionX})`}}
+                <div style={{WebkitTransform: `translate3d(${transitionX},0,0)`}}
                     onTransitionEnd={transitionEnd}
                     className={'tslider-items ' + (transition ? 'transition': '')}>
                     {items}

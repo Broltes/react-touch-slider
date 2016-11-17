@@ -15,7 +15,7 @@ var App = React.createClass({
 
         return (
             <div>
-                <Slider autoPlayInterval={2e3} imgs={imgs}/>
+                <Slider autoPlayInterval={2e3} imgs={imgs} onClick={(i) => alert(i)}/>
             </div>
         );
     }
